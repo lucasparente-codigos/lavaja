@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api/api';
+import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 interface LoginData {
@@ -21,6 +22,7 @@ export default function LoginPage() {
   const [errors, setErrors] = useState<LoginErrors>({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const validateForm = (): boolean => {
     const newErrors: LoginErrors = {};
@@ -48,17 +50,16 @@ export default function LoginPage() {
     setErrors({});
     
     try {
-      const response = await axios.post('http://localhost:4000/api/auth/login', {
+      const response = await api.post('/auth/login', {
         email: form.email.trim(),
         password: form.password
       });
       
-      // Salvar token no localStorage
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+      // Salvar token e dados do usuário no AuthContext
+      login(response.data.data.token, response.data.data.user);
       
       // Redirecionar para home
-      navigate('/home');
+      navigate('/');
     } catch (err: any) {
       const errorMessage = err?.response?.data?.error || 'Erro ao fazer login';
       setErrors({ general: errorMessage });

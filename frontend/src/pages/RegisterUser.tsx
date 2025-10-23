@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api/api';
+import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 interface FormData {
@@ -68,7 +69,7 @@ export default function RegisterUser() {
     setSuccess(false);
     
     try {
-      await axios.post('http://localhost:4000/api/users/register', {
+      await api.post('/users/register', {
         name: form.name.trim(),
         email: form.email.trim(),
         password: form.password

@@ -108,7 +108,7 @@ export default function HomePage() {
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               {user?.type === 'company' 
                 ? 'Sua empresa foi cadastrada com sucesso. Em breve você terá acesso a todas as funcionalidades do painel empresarial.'
-                : 'Sua conta foi criada com sucesso. Em breve você terá acesso a todos os serviços de lavagem de carros.'
+                : 'Sua conta foi criada com sucesso. Em breve você terá acesso a todos os serviços de lavanderia.'
               }
             </p>
 
@@ -127,7 +127,7 @@ export default function HomePage() {
                 ) : (
                   <>
                     <li>• Explorar serviços disponíveis</li>
-                    <li>• Agendar lavagem de carro</li>
+                    <li>• Agendar lavanderia</li>
                     <li>• Acompanhar histórico</li>
                     <li>• Avaliar serviços</li>
                   </>
