@@ -51,3 +51,15 @@ export const validateRequest = (schema: Joi.ObjectSchema) => {
     next();
   };
 };
+
+
+export const loginSchema = Joi.object({
+  email: Joi.string().email().required().messages({
+    'string.email': 'Email deve ter um formato válido',
+    'any.required': 'Email é obrigatório'
+  }),
+  password: Joi.string().required().messages({
+    'any.required': 'Senha é obrigatória'
+  })
+});
+

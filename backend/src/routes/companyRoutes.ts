@@ -8,3 +8,4 @@ const router = Router();
 router.post('/register', validateRequest(companySchema), registerCompany);
 
 export default router;
+

@@ -32,4 +32,3 @@ export const registerUser = async (req: Request, res: Response) => {
     res.status(500).json(errorResponse('Erro interno do servidor'));
   }
 };
-

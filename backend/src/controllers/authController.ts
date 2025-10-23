@@ -1,23 +1,17 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
 import { verifyPassword } from '../utils/password';
 import { successResponse, errorResponse } from '../utils/response';
 import jwt from 'jsonwebtoken';
-
-const prisma = new PrismaClient();
+import { UserModel } from '../models/User';
+import { CompanyModel } from '../models/Company';
 
 export const login = async (req: Request, res: Response) => {
   try {
-    console.log('Login attempt:', req.body);
     const { email, password } = req.body;
     
-    if (!email || !password) {
-      return res.status(400).json(errorResponse('Email e senha são obrigatórios'));
-    }
-    
     // Buscar usuário por email
-    const user = await prisma.user.findUnique({ where: { email } });
-    const company = await prisma.company.findUnique({ where: { email } });
+    const user = await UserModel.findByEmail(email);
+    const company = await CompanyModel.findByEmail(email);
     
     const account = user || company;
     const accountType = user ? 'user' : 'company';
