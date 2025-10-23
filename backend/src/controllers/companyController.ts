@@ -39,3 +39,37 @@ export const registerCompany = async (req: Request, res: Response) => {
     res.status(500).json(errorResponse('Erro interno do servidor'));
   }
 };
+
+export const listCompanies = async (req: Request, res: Response) => {
+  try {
+    // A autenticação já deve ter ocorrido, garantindo que o usuário esteja logado
+    const companies = await CompanyModel.findAll();
+
+    res.json(successResponse(companies, 'Lista de empresas recuperada com sucesso'));
+  } catch (err: any) {
+    console.error('Erro ao listar empresas:', err);
+    res.status(500).json(errorResponse('Erro interno do servidor'));
+  }
+};
+
+export const deleteCompany = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const companyId = parseInt(id, 10);
+
+    if (isNaN(companyId)) {
+      return res.status(400).json(errorResponse('ID de empresa inválido'));
+    }
+
+    const deleted = await CompanyModel.delete(companyId);
+
+    if (deleted) {
+      res.json(successResponse(null, 'Empresa deletada com sucesso'));
+    } else {
+      res.status(404).json(errorResponse('Empresa não encontrada'));
+    }
+  } catch (err: any) {
+    console.error('Erro ao deletar empresa:', err);
+    res.status(500).json(errorResponse('Erro interno do servidor'));
+  }
+};

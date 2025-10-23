@@ -36,4 +36,15 @@ export class UserModel {
     const db = await getDb();
     return db.get<User>('SELECT * FROM User WHERE id = ?', id);
   }
+
+  static async findAll(): Promise<User[]> {
+    const db = await getDb();
+    return db.all<User[]>('SELECT id, name, email, createdAt FROM User');
+  }
+
+  static async delete(id: number): Promise<boolean> {
+    const db = await getDb();
+    const result = await db.run('DELETE FROM User WHERE id = ?', id);
+    return result.changes === 1;
+  }
 }

@@ -43,4 +43,15 @@ export class CompanyModel {
     const db = await getDb();
     return db.get<Company>('SELECT * FROM Company WHERE id = ?', id);
   }
+
+  static async findAll(): Promise<Company[]> {
+    const db = await getDb();
+    return db.all<Company[]>('SELECT id, name, email, cnpj, createdAt FROM Company');
+  }
+
+  static async delete(id: number): Promise<boolean> {
+    const db = await getDb();
+    const result = await db.run('DELETE FROM Company WHERE id = ?', id);
+    return result.changes === 1;
+  }
 }
