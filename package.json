@@ -2,10 +2,12 @@
   "name": "lavaja-mono",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\""
-  },
+  "dev": "concurrently \"yarn server\" \"yarn client\"",
+  "server": "cd backend && yarn dev",
+  "client": "cd frontend && yarn dev"
+},
   "devDependencies": {
-    "concurrently": "^8.0.0"
+    "concurrently": "^9.2.1"
   },
   "dependencies": {
     "axios": "^1.12.2"
