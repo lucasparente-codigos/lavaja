@@ -29,35 +29,45 @@ export default function RegisterUser() {
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
+
+  const validatePassword = (password: string): boolean => {
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    return hasLowerCase && hasUpperCase && hasNumber;
+  };
+
   const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
+  const newErrors: FormErrors = {};
 
-    if (!form.name.trim()) {
-      newErrors.name = 'Nome é obrigatório';
-    } else if (form.name.trim().length < 2) {
-      newErrors.name = 'Nome deve ter pelo menos 2 caracteres';
-    }
+  if (!form.name.trim()) {
+    newErrors.name = 'Nome é obrigatório';
+  } else if (form.name.trim().length < 2) {
+    newErrors.name = 'Nome deve ter pelo menos 2 caracteres';
+  }
 
-    if (!form.email.trim()) {
-      newErrors.email = 'Email é obrigatório';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      newErrors.email = 'Email inválido';
-    }
+  if (!form.email.trim()) {
+    newErrors.email = 'Email é obrigatório';
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+    newErrors.email = 'Email inválido';
+  }
 
-    if (!form.password) {
-      newErrors.password = 'Senha é obrigatória';
-    } else if (form.password.length < 6) {
-      newErrors.password = 'Senha deve ter pelo menos 6 caracteres';
-    }
+  if (!form.password) {
+    newErrors.password = 'Senha é obrigatória';
+  } else if (form.password.length < 6) {
+    newErrors.password = 'Senha deve ter pelo menos 6 caracteres';
+  } else if (!validatePassword(form.password)) {
+    newErrors.password = 'Senha deve conter pelo menos uma letra minúscula, uma maiúscula e um número';
+  }
 
-    if (!form.confirmPassword) {
-      newErrors.confirmPassword = 'Confirmação de senha é obrigatória';
-    } else if (form.password !== form.confirmPassword) {
-      newErrors.confirmPassword = 'Senhas não coincidem';
-    }
+  if (!form.confirmPassword) {
+    newErrors.confirmPassword = 'Confirmação de senha é obrigatória';
+  } else if (form.password !== form.confirmPassword) {
+    newErrors.confirmPassword = 'Senhas não coincidem';
+  }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

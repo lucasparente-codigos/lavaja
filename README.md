@@ -416,7 +416,7 @@ GET    /api/machines/:id/status         # Status + fila
 - ✅ Validação de senha no frontend
 - ✅ Caminho da logo em produção
 
-### Em Investigação
+### Em Investigação    
 - ⚠️ Token expira sem refresh automático
 - ⚠️ Sem paginação nas listagens
 - ⚠️ Polling constante (consumo de rede)
@@ -458,7 +458,7 @@ Desenvolvido por **[Seu Nome]**
 
 - GitHub: [@seu-usuario](https://github.com/seu-usuario)
 - LinkedIn: [Seu Nome](https://linkedin.com/in/seu-perfil)
-- Email: seu.email@exemplo.com
+- Email: <lucas.parente0808@gmail.com>
 
 ---
 
@@ -480,11 +480,3 @@ Encontrou um bug? Tem uma sugestão?
 - [TypeScript](https://www.typescriptlang.org/) - Superset JavaScript
 
 ---
-
-<div align="center">
-
-**⭐ Se este projeto foi útil, considere dar uma estrela!**
-
-Made with ❤️ and ☕
-
-</div>

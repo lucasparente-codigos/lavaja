@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import RegisterUser from './RegisterUser';
 import RegisterCompany from './RegisterCompany';
-import logo from '../assets/logo.jpeg';
 
 export default function RegisterPage() {
   const [mode, setMode] = useState<'user' | 'company'>('user');
@@ -27,7 +26,7 @@ export default function RegisterPage() {
             <div className="flex justify-center mb-6">
               <div className="rounded-2xl shadow-lg overflow-hidden">
                 <img 
-                  src={logo} 
+                  src={'logo.jpeg'} 
                   alt="LavaJá Logo" 
                   className="w-16 h-16 object-cover rounded-2xl"
                 />

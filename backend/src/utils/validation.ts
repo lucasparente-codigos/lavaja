@@ -27,8 +27,9 @@ export const companySchema = Joi.object({
     'string.email': 'Email deve ter um formato válido',
     'any.required': 'Email é obrigatório'
   }),
-  cnpj: Joi.string().pattern(/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/).required().messages({
-    'string.pattern.base': 'CNPJ deve ter o formato 00.000.000/0000-00',
+  // CORREÇÃO: Aceita CNPJ com OU sem formatação
+  cnpj: Joi.string().pattern(/^\d{14}$|^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/).required().messages({
+    'string.pattern.base': 'CNPJ deve ter 14 dígitos ou formato 00.000.000/0000-00',
     'any.required': 'CNPJ é obrigatório'
   }),
   password: Joi.string().min(6).pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).required().messages({
@@ -51,7 +52,6 @@ export const validateRequest = (schema: Joi.ObjectSchema) => {
     next();
   };
 };
-
 
 export const loginSchema = Joi.object({
   email: Joi.string().email().required().messages({

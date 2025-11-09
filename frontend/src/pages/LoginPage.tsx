@@ -84,7 +84,7 @@ export default function LoginPage() {
           <div className="flex justify-center mb-6">
             <div className="rounded-2xl shadow-lg overflow-hidden">
               <img 
-                src="/src/assets/logo.jpeg" 
+                src="logo.jpeg" 
                 alt="LavaJá Logo" 
                 className="w-16 h-16 object-cover rounded-2xl"
               />

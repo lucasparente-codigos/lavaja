@@ -62,7 +62,7 @@ export default function HomePage() {
             <div className="flex items-center space-x-4">
               <div className="rounded-xl shadow-lg overflow-hidden">
                 <img 
-                  src="/src/assets/logo.jpeg" 
+                  src="logo.jpeg" 
                   alt="LavaJá Logo" 
                   className="w-10 h-10 object-cover rounded-xl"
                 />

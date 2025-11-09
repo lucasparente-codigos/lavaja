@@ -52,6 +52,14 @@ export default function RegisterCompany() {
     return true;
   };
 
+
+  const validatePassword = (password: string): boolean => {
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    return hasLowerCase && hasUpperCase && hasNumber;
+  };
+
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
@@ -77,6 +85,8 @@ export default function RegisterCompany() {
       newErrors.password = 'Senha é obrigatória';
     } else if (form.password.length < 6) {
       newErrors.password = 'Senha deve ter pelo menos 6 caracteres';
+    } else if (!validatePassword(form.password)) {
+      newErrors.password = 'Senha deve conter pelo menos uma letra minúscula, uma maiúscula e um número';
     }
 
     if (!form.confirmPassword) {

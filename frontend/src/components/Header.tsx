@@ -19,7 +19,7 @@ const Header: React.FC = () => {
           <div className="flex-shrink-0 flex items-center">
             <img 
               className="h-8 w-auto" 
-              src="/src/assets/logo.jpeg" 
+              src="logo.jpeg" 
               alt="LavaJá Logo" 
             />
             <span className="ml-3 text-xl font-bold text-gray-900">LavaJá</span>
