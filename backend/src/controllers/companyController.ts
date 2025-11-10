@@ -1,3 +1,4 @@
+// backend/src/controllers/companyController.ts
 import { Request, Response } from 'express';
 import { hashPassword } from '../utils/password';
 import { successResponse, errorResponse } from '../utils/response';
@@ -5,7 +6,10 @@ import { CompanyModel } from '../models/Company';
 
 export const registerCompany = async (req: Request, res: Response) => {
   try {
-    const { name, email, cnpj, password } = req.body;
+    let { name, email, cnpj, password } = req.body;
+    
+    // Remover formatação do CNPJ (pontos, barras e hífens)
+    cnpj = cnpj.replace(/\D/g, '');
     
     // Verificar se empresa já existe por email
     const existingCompanyByEmail = await CompanyModel.findByEmail(email);
@@ -42,9 +46,7 @@ export const registerCompany = async (req: Request, res: Response) => {
 
 export const listCompanies = async (req: Request, res: Response) => {
   try {
-    // A autenticação já deve ter ocorrido, garantindo que o usuário esteja logado
     const companies = await CompanyModel.findAll();
-
     res.json(successResponse(companies, 'Lista de empresas recuperada com sucesso'));
   } catch (err: any) {
     console.error('Erro ao listar empresas:', err);

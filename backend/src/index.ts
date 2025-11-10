@@ -1,3 +1,4 @@
+// backend/src/index.ts
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -7,6 +8,7 @@ import { errorHandler } from "./middleware/errorHandler";
 import userRoutes from "./routes/userRoutes";
 import companyRoutes from "./routes/companyRoutes";
 import authRoutes from "./routes/authRoutes";
+import machineRoutes from "./routes/machineRoutes"; // NOVO
 import { openDb } from "./database";
 
 // Carregar variáveis de ambiente
@@ -52,6 +54,7 @@ app.get("/", (req, res) => {
 app.use("/api/users", userRoutes);
 app.use("/api/companies", companyRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/machines", machineRoutes); // NOVO
 
 // Middleware de tratamento de erros (deve ser o último)
 app.use(errorHandler);
@@ -59,9 +62,9 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 4000;
 openDb().then(() => {
   app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando na porta ${PORT}`);
-  console.log(`📊 Ambiente: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🔗 URL: http://localhost:${PORT}`);
+    console.log(`🚀 Servidor rodando na porta ${PORT}`);
+    console.log(`📊 Ambiente: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🔗 URL: http://localhost:${PORT}`);
   });
 }).catch(err => {
   console.error("❌ Erro ao conectar com o banco de dados:", err);
