@@ -8,8 +8,14 @@ import { errorHandler } from "./middleware/errorHandler";
 import userRoutes from "./routes/userRoutes";
 import companyRoutes from "./routes/companyRoutes";
 import authRoutes from "./routes/authRoutes";
-import machineRoutes from "./routes/machineRoutes"; // NOVO
+import machineRoutes from "./routes/machineRoutes";
+import usageRoutes from "./routes/usageRoutes";
+import publicRoutes from "./routes/publicRoutes";
+import queueRoutes from "./routes/queueRoutes"; // 🔥 ADICIONADO
 import { openDb } from "./database";
+import http from "http";
+import { initSocket } from "./socket";
+import { BackgroundJobs } from "./services/backgroundJobs";
 
 // Carregar variáveis de ambiente
 dotenv.config();
@@ -56,17 +62,6 @@ app.get("/", (req, res) => {
   });
 });
 
-import http from "http";
-
-import { initSocket } from "./socket";
-
-import usageRoutes from "./routes/usageRoutes";
-import publicRoutes from "./routes/publicRoutes";
-
-import { BackgroundJobs } from "./services/backgroundJobs";
-
-// ... (imports and initial setup remain the same)
-
 // Rotas da API
 app.use("/api/users", userRoutes);
 app.use("/api/companies", companyRoutes);
@@ -74,7 +69,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/machines", machineRoutes);
 app.use("/api/usage", usageRoutes);
 app.use("/api/public", publicRoutes);
-app.use("/api/queue", queueRoutes); // Adicionar rota de fila
+app.use("/api/queue", queueRoutes); // 🔥 ADICIONADO
 
 // Middleware de tratamento de erros (deve ser o último)
 app.use(errorHandler);

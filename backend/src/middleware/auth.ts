@@ -8,6 +8,11 @@ export interface TokenPayload extends JwtPayload {
   type: 'user' | 'company';
 }
 
+// 🔥 ADICIONADO: Interface AuthRequest exportada
+export interface AuthRequest extends Request {
+  user?: TokenPayload;
+}
+
 // Aumenta a interface Request do Express para incluir a propriedade 'user'
 declare global {
   namespace Express {

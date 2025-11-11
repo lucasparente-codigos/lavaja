@@ -40,9 +40,8 @@ export const MachineForm: React.FC<MachineFormProps> = ({ onSave, onCancel, init
           label="Nome da Máquina"
           type="text"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(value) => setName(value)} // 🔥 CORRIGIDO
           placeholder="Ex: Lavadora #1"
-          required
         />
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Máquina</label>
@@ -59,8 +58,7 @@ export const MachineForm: React.FC<MachineFormProps> = ({ onSave, onCancel, init
           label="Duração Padrão (minutos)"
           type="number"
           value={defaultDuration.toString()}
-          onChange={(e) => setDefaultDuration(parseInt(e.target.value, 10))}
-          required
+          onChange={(value) => setDefaultDuration(parseInt(value, 10) || 0)} // 🔥 CORRIGIDO
         />
       </div>
       <div className="flex justify-end space-x-4 mt-6">

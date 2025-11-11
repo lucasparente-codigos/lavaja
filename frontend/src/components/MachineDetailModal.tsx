@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../api/api';
 import { Modal } from './Modal';
 import { Button } from './Button';
@@ -40,7 +40,8 @@ export const MachineDetailModal: React.FC<MachineDetailModalProps> = ({ machineI
     setLoading(true);
     setError(null);
 
-    const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:4000');
+    // 🔥 CORRIGIDO: Remover /api da URL do WebSocket
+    const socket = io('http://localhost:4000');
 
     socket.on('connect', () => {
       console.log('Conectado ao WebSocket');
@@ -48,6 +49,7 @@ export const MachineDetailModal: React.FC<MachineDetailModalProps> = ({ machineI
     });
 
     socket.on('statusUpdate', (newDetails: MachineDetails) => {
+      console.log('Status atualizado:', newDetails);
       setDetails(newDetails);
       setLoading(false);
     });
@@ -133,7 +135,7 @@ export const MachineDetailModal: React.FC<MachineDetailModalProps> = ({ machineI
           <p><strong>Sua Posição na Fila:</strong> {myStatus.position}</p>
         )}
 
-        <div className="mt-6 flex justify-center">
+        <div className="mt-6 flex justify-center space-x-4">
           {!myStatus?.inQueue && machine.status === 'em_uso' && (
             <Button onClick={handleJoinQueue}>Entrar na Fila</Button>
           )}

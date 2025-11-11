@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api/api';
-import { FormContainer } from '../components/FormContainer';
 import { Button } from '../components/Button';
 import { MachineDetailModal } from '../components/MachineDetailModal';
 
@@ -87,40 +86,40 @@ const HomePage: React.FC = () => {
   };
 
   const renderCompanyList = () => (
-    <>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-3xl font-bold mb-8 text-center">Lavanderias Disponíveis</h1>
       {companies.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {companies.map((company) => (
             <div key={company.id} className="bg-white rounded-lg shadow-lg p-6 flex flex-col">
-              <h2 className="text-xl font-bold mb-2">{company.name}</h2>
-              <div className="flex-grow space-y-2 text-gray-600">
+              <h2 className="text-xl font-bold mb-4">{company.name}</h2>
+              <div className="flex-grow space-y-2 text-gray-600 mb-4">
                 <p>Disponíveis: <span className="font-bold text-green-500">{company.machinesAvailable}</span></p>
                 <p>Em Uso: <span className="font-bold text-yellow-500">{company.machinesInUse}</span></p>
                 <p>Total: <span className="font-bold">{company.machinesTotal}</span></p>
               </div>
-              <div className="mt-6">
-                <Button onClick={() => handleSelectCompany(company)} className="w-full">
-                  Ver Máquinas
-                </Button>
-              </div>
+              <Button onClick={() => handleSelectCompany(company)}>
+                Ver Máquinas
+              </Button>
             </div>
           ))}
         </div>
       ) : (
         <p className="text-center text-gray-500">Nenhuma lavanderia encontrada.</p>
       )}
-    </>
+    </div>
   );
 
   const renderMachineList = () => (
-    <>
-      <Button onClick={handleBackToCompanies} variant="secondary" className="mb-8">
-        &larr; Voltar para Lavanderias
-      </Button>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mb-6">
+        <Button onClick={handleBackToCompanies} variant="secondary">
+          ← Voltar para Lavanderias
+        </Button>
+      </div>
       <h1 className="text-3xl font-bold mb-8 text-center">Máquinas em {selectedCompany?.name}</h1>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white rounded-lg shadow">
+      <div className="overflow-x-auto bg-white rounded-lg shadow">
+        <table className="min-w-full">
           <thead className="bg-gray-800 text-white">
             <tr>
               <th className="py-3 px-4 text-left">Máquina</th>
@@ -151,20 +150,28 @@ const HomePage: React.FC = () => {
           </tbody>
         </table>
       </div>
-    </>
+    </div>
   );
 
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <p className="text-center text-gray-600">Carregando...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <p className="text-center text-red-500">{error}</p>
+      </div>
+    );
+  }
+
   return (
-    <FormContainer>
-      {loading ? (
-        <p className="text-center">Carregando...</p>
-      ) : error ? (
-        <p className="text-red-500 text-center">{error}</p>
-      ) : selectedCompany ? (
-        renderMachineList()
-      ) : (
-        renderCompanyList()
-      )}
+    <>
+      {selectedCompany ? renderMachineList() : renderCompanyList()}
 
       {viewingMachineId && (
         <MachineDetailModal 
@@ -172,9 +179,8 @@ const HomePage: React.FC = () => {
           onClose={() => setViewingMachineId(null)}
         />
       )}
-    </FormContainer>
+    </>
   );
 };
 
 export default HomePage;
-

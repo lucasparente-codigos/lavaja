@@ -3,7 +3,6 @@ import api from '../api/api';
 import { Machine, MachineStats } from '../types';
 import { Button } from '../components/Button';
 import { Card } from '../components/Card';
-import { FormContainer } from '../components/FormContainer';
 import { Modal } from '../components/Modal';
 import { MachineForm } from '../components/MachineForm';
 
@@ -93,23 +92,16 @@ const DashboardPage: React.FC = () => {
   };
 
   const handleStartUsage = async (machineId: number) => {
-    const durationStr = window.prompt('Digite a duração do uso em minutos:', '60');
-    const duration = durationStr ? parseInt(durationStr, 10) : null;
-
-    if (duration && duration > 0) {
-      try {
-        const response = await api.post(`/usage/start/${machineId}`, { duration });
-        if (response.data.success) {
-          fetchMachines();
-        } else {
-          alert(`Erro: ${response.data.error}`);
-        }
-      } catch (err) {
-        alert('Ocorreu um erro ao iniciar o uso da máquina.');
-        console.error(err);
+    try {
+      const response = await api.post(`/usage/start/${machineId}`);
+      if (response.data.success) {
+        fetchMachines();
+      } else {
+        alert(`Erro: ${response.data.error}`);
       }
-    } else if (durationStr !== null) {
-      alert('Por favor, insira uma duração válida.');
+    } catch (err) {
+      alert('Ocorreu um erro ao iniciar o uso da máquina.');
+      console.error(err);
     }
   };
 
@@ -148,19 +140,27 @@ const DashboardPage: React.FC = () => {
   };
 
   if (loading) {
-    return <FormContainer><p>Carregando...</p></FormContainer>;
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <p className="text-center text-gray-600">Carregando...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <FormContainer><p className="text-red-500">{error}</p></FormContainer>;
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <p className="text-center text-red-500">{error}</p>
+      </div>
+    );
   }
 
   return (
-    <FormContainer>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-3xl font-bold mb-6 text-center">Dashboard da Empresa</h1>
 
       {stats && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 text-center">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <Card title="Total" value={stats.total} />
           <Card title="Disponíveis" value={stats.available} />
           <Card title="Em Uso" value={stats.inUse} />
@@ -174,8 +174,8 @@ const DashboardPage: React.FC = () => {
         </Button>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white rounded-lg shadow">
+      <div className="overflow-x-auto bg-white rounded-lg shadow">
+        <table className="min-w-full">
           <thead className="bg-gray-800 text-white">
             <tr>
               <th className="py-3 px-4 text-left">Nome</th>
@@ -194,23 +194,41 @@ const DashboardPage: React.FC = () => {
                   <td className="py-3 px-4">{getStatusLabel(machine.status)}</td>
                   <td className="py-3 px-4 text-center">
                     {machine.status === 'disponivel' && (
-                      <Button variant="primary" size="sm" onClick={() => handleStartUsage(machine.id)}>
+                      <Button 
+                        variant="primary" 
+                        size="sm" 
+                        onClick={() => handleStartUsage(machine.id)}
+                      >
                         Iniciar Uso
                       </Button>
                     )}
                     {machine.status === 'em_uso' && (
-                      <Button variant="warning" size="sm" onClick={() => handleFinishUsage(machine.id)}>
+                      <Button 
+                        variant="warning" 
+                        size="sm" 
+                        onClick={() => handleFinishUsage(machine.id)}
+                      >
                         Finalizar
                       </Button>
                     )}
                   </td>
-                  <td className="py-3 px-4 flex justify-center space-x-2">
-                    <Button variant="secondary" size="sm" onClick={() => handleEditClick(machine)}>
-                      Editar
-                    </Button>
-                    <Button variant="danger" size="sm" onClick={() => handleDeleteClick(machine)}>
-                      Deletar
-                    </Button>
+                  <td className="py-3 px-4">
+                    <div className="flex justify-center space-x-2">
+                      <Button 
+                        variant="secondary" 
+                        size="sm" 
+                        onClick={() => handleEditClick(machine)}
+                      >
+                        Editar
+                      </Button>
+                      <Button 
+                        variant="danger" 
+                        size="sm" 
+                        onClick={() => handleDeleteClick(machine)}
+                      >
+                        Deletar
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))
@@ -241,7 +259,7 @@ const DashboardPage: React.FC = () => {
           initialData={editingMachine ?? undefined}
         />
       </Modal>
-    </FormContainer>
+    </div>
   );
 };
 
