@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import { QueueService } from '../services/queueService';
 import { successResponse, errorResponse } from '../utils/response';
+import { broadcastMachineUpdate } from '../socket';
 
 // Entrar na fila
 export const joinQueue = async (req: AuthRequest, res: Response) => {
@@ -20,6 +21,8 @@ export const joinQueue = async (req: AuthRequest, res: Response) => {
     }
 
     const result = await QueueService.joinQueue(machineIdNum, userId);
+
+    broadcastMachineUpdate(machineIdNum);
 
     res.status(201).json(successResponse(result, 'Você entrou na fila'));
   } catch (err: any) {
@@ -49,6 +52,8 @@ export const leaveQueue = async (req: AuthRequest, res: Response) => {
     }
 
     await QueueService.leaveQueue(machineIdNum, userId);
+
+    broadcastMachineUpdate(machineIdNum);
 
     res.json(successResponse(null, 'Você saiu da fila'));
   } catch (err: any) {
@@ -89,9 +94,11 @@ export const confirmUsage = async (req: AuthRequest, res: Response) => {
       const { UsageService } = require('../services/usageService');
       const usageResult = await UsageService.startUsage(machineIdNum, userId);
       
+      broadcastMachineUpdate(machineIdNum); // Broadcast after usage starts
       return res.json(successResponse(usageResult, 'Uso iniciado com sucesso'));
     }
 
+    broadcastMachineUpdate(machineIdNum); // Broadcast after machine is dispensed
     res.json(successResponse(null, 'Você dispensou a máquina'));
   } catch (err: any) {
     console.error('Erro ao confirmar uso:', err);

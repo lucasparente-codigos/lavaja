@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import { UsageService } from '../services/usageService';
 import { successResponse, errorResponse } from '../utils/response';
+import { broadcastMachineUpdate } from '../socket';
 
 // Iniciar uso de máquina
 export const startUsage = async (req: AuthRequest, res: Response) => {
@@ -20,6 +21,8 @@ export const startUsage = async (req: AuthRequest, res: Response) => {
     }
 
     const result = await UsageService.startUsage(machineIdNum, userId);
+
+    broadcastMachineUpdate(machineIdNum);
 
     res.status(201).json(successResponse(result, 'Uso iniciado com sucesso'));
   } catch (err: any) {
@@ -51,6 +54,10 @@ export const finishUsage = async (req: AuthRequest, res: Response) => {
 
     const result = await UsageService.finishUsage(usageIdNum, requesterId, requesterType);
 
+    if (result.machineId) {
+      broadcastMachineUpdate(result.machineId);
+    }
+
     res.json(successResponse(result, 'Uso finalizado com sucesso'));
   } catch (err: any) {
     console.error('Erro ao finalizar uso:', err);
@@ -73,6 +80,10 @@ export const cancelUsage = async (req: AuthRequest, res: Response) => {
     }
 
     const result = await UsageService.cancelUsage(userId);
+
+    if (result.machineId) {
+      broadcastMachineUpdate(result.machineId);
+    }
 
     res.json(successResponse(result, 'Uso cancelado com sucesso'));
   } catch (err: any) {
@@ -137,6 +148,8 @@ export const finishMachineUsage = async (req: AuthRequest, res: Response) => {
 
     // Finalizar uso
     const result = await UsageService.finishUsage(activeUsage.id, companyId, 'company');
+
+    broadcastMachineUpdate(machineIdNum);
 
     res.json(successResponse(result, 'Uso finalizado com sucesso'));
   } catch (err: any) {

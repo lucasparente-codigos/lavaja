@@ -28,7 +28,10 @@ const Header: React.FC = () => {
           {/* Navegação e Perfil */}
           <div className="flex items-center">
             <nav className="hidden md:flex space-x-4 mr-6">
-              <a href="/" className="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+              <a href="/home" className="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+              {user?.type === 'company' && (
+                <a href="/dashboard" className="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+              )}
               {/* Adicionar outros links de navegação aqui se necessário */}
             </nav>
 

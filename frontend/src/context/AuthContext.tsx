@@ -1,14 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { User } from '../types';
 
 // Tipos de dados
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  type: 'user' | 'company';
-  cnpj?: string;
-}
-
 interface AuthContextType {
   user: User | null;
   token: string | null;
@@ -79,5 +72,3 @@ export const useAuth = () => {
   return context;
 };
 
-// Exportar os tipos para uso em outros componentes
-export type { User };

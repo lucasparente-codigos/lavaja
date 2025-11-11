@@ -1,158 +1,180 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import api from '../api/api';
+import { FormContainer } from '../components/FormContainer';
+import { Button } from '../components/Button';
+import { MachineDetailModal } from '../components/MachineDetailModal';
 
-interface User {
+// Define types locally for now
+interface Company {
   id: number;
   name: string;
-  email: string;
-  type: 'user' | 'company';
+  machinesAvailable: number;
+  machinesInUse: number;
+  machinesTotal: number;
 }
 
-export default function HomePage() {
-  const [user, setUser] = useState<User | null>(null);
+interface Machine {
+  id: number;
+  name: string;
+  type: 'lavadora' | 'secadora';
+  status: 'disponivel' | 'em_uso' | 'manutencao';
+  queueLength: number;
+  currentUsage?: {
+    estimatedEndTime: string;
+    timeRemaining: number;
+  };
+}
+
+const HomePage: React.FC = () => {
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [machines, setMachines] = useState<Machine[]>([]);
+  const [selectedCompany, setSelectedCompany] = useState<{ id: number; name: string } | null>(null);
+  const [viewingMachineId, setViewingMachineId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Verificar se há token no localStorage
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-    
-    if (!token || !userData) {
-      navigate('/login');
-      return;
-    }
+    const fetchCompanies = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get('/public/companies');
+        if (response.data.success) {
+          setCompanies(response.data.data);
+        } else {
+          setError(response.data.error || 'Falha ao buscar empresas.');
+        }
+      } catch (err) {
+        setError('Ocorreu um erro ao conectar ao servidor.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    if (!selectedCompany) {
+      fetchCompanies();
+    }
+  }, [selectedCompany]);
+
+  const handleSelectCompany = async (company: { id: number; name: string }) => {
+    setSelectedCompany(company);
+    setLoading(true);
     try {
-      const parsedUser = JSON.parse(userData);
-      setUser(parsedUser);
-    } catch (error) {
-      console.error('Erro ao parsear dados do usuário:', error);
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      navigate('/login');
+      const response = await api.get(`/public/companies/${company.id}/machines`);
+      if (response.data.success) {
+        setMachines(response.data.data.machines);
+      } else {
+        setError(response.data.error || 'Falha ao buscar máquinas.');
+      }
+    } catch (err) {
+      setError('Ocorreu um erro ao conectar ao servidor.');
     } finally {
       setLoading(false);
     }
-  }, [navigate]);
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/login');
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Carregando...</p>
+  const handleBackToCompanies = () => {
+    setSelectedCompany(null);
+    setMachines([]);
+  };
+
+  const getStatusLabel = (status: Machine['status']) => {
+    switch (status) {
+      case 'disponivel': return <span className="font-bold text-green-500">Disponível</span>;
+      case 'em_uso': return <span className="font-bold text-yellow-500">Em Uso</span>;
+      case 'manutencao': return <span className="font-bold text-red-500">Manutenção</span>;
+      default: return status;
+    }
+  };
+
+  const renderCompanyList = () => (
+    <>
+      <h1 className="text-3xl font-bold mb-8 text-center">Lavanderias Disponíveis</h1>
+      {companies.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {companies.map((company) => (
+            <div key={company.id} className="bg-white rounded-lg shadow-lg p-6 flex flex-col">
+              <h2 className="text-xl font-bold mb-2">{company.name}</h2>
+              <div className="flex-grow space-y-2 text-gray-600">
+                <p>Disponíveis: <span className="font-bold text-green-500">{company.machinesAvailable}</span></p>
+                <p>Em Uso: <span className="font-bold text-yellow-500">{company.machinesInUse}</span></p>
+                <p>Total: <span className="font-bold">{company.machinesTotal}</span></p>
+              </div>
+              <div className="mt-6">
+                <Button onClick={() => handleSelectCompany(company)} className="w-full">
+                  Ver Máquinas
+                </Button>
+              </div>
+            </div>
+          ))}
         </div>
+      ) : (
+        <p className="text-center text-gray-500">Nenhuma lavanderia encontrada.</p>
+      )}
+    </>
+  );
+
+  const renderMachineList = () => (
+    <>
+      <Button onClick={handleBackToCompanies} variant="secondary" className="mb-8">
+        &larr; Voltar para Lavanderias
+      </Button>
+      <h1 className="text-3xl font-bold mb-8 text-center">Máquinas em {selectedCompany?.name}</h1>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white rounded-lg shadow">
+          <thead className="bg-gray-800 text-white">
+            <tr>
+              <th className="py-3 px-4 text-left">Máquina</th>
+              <th className="py-3 px-4 text-left">Status</th>
+              <th className="py-3 px-4 text-left">Tempo Restante</th>
+              <th className="py-3 px-4 text-center">Fila</th>
+              <th className="py-3 px-4 text-center">Ação</th>
+            </tr>
+          </thead>
+          <tbody>
+            {machines.map((machine) => (
+              <tr key={machine.id} className="border-b hover:bg-gray-100">
+                <td className="py-3 px-4">{machine.name} ({machine.type})</td>
+                <td className="py-3 px-4">{getStatusLabel(machine.status)}</td>
+                <td className="py-3 px-4">
+                  {machine.status === 'em_uso' && machine.currentUsage
+                    ? `${machine.currentUsage.timeRemaining} min`
+                    : '-'}
+                </td>
+                <td className="py-3 px-4 text-center">{machine.queueLength}</td>
+                <td className="py-3 px-4 text-center">
+                  <Button size="sm" onClick={() => setViewingMachineId(machine.id)}>
+                    Ver Detalhes
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-    );
-  }
+    </>
+  );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-4">
-              <div className="rounded-xl shadow-lg overflow-hidden">
-                <img 
-                  src="logo.jpeg" 
-                  alt="LavaJá Logo" 
-                  className="w-10 h-10 object-cover rounded-xl"
-                />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">LavaJá</h1>
-                <p className="text-sm text-gray-600">
-                  {user?.type === 'company' ? 'Painel Empresarial' : 'Área do Cliente'}
-                </p>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">{user?.name}</p>
-                <p className="text-xs text-gray-500">{user?.email}</p>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm"
-              >
-                Sair
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+    <FormContainer>
+      {loading ? (
+        <p className="text-center">Carregando...</p>
+      ) : error ? (
+        <p className="text-red-500 text-center">{error}</p>
+      ) : selectedCompany ? (
+        renderMachineList()
+      ) : (
+        renderCompanyList()
+      )}
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center">
-          <div className="bg-white rounded-2xl shadow-xl p-12">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Bem-vindo ao LavaJá!
-            </h2>
-            
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              {user?.type === 'company' 
-                ? 'Sua empresa foi cadastrada com sucesso. Em breve você terá acesso a todas as funcionalidades do painel empresarial.'
-                : 'Sua conta foi criada com sucesso. Em breve você terá acesso a todos os serviços de lavanderia.'
-              }
-            </p>
-
-            <div className="bg-blue-50 rounded-xl p-6 mb-8">
-              <h3 className="text-lg font-semibold text-blue-900 mb-2">
-                🚀 Próximos Passos
-              </h3>
-              <ul className="text-blue-800 text-left max-w-md mx-auto space-y-2">
-                {user?.type === 'company' ? (
-                  <>
-                    <li>• Configurar perfil da empresa</li>
-                    <li>• Adicionar serviços oferecidos</li>
-                    <li>• Configurar localização</li>
-                    <li>• Gerenciar agendamentos</li>
-                  </>
-                ) : (
-                  <>
-                    <li>• Explorar serviços disponíveis</li>
-                    <li>• Agendar lavanderia</li>
-                    <li>• Acompanhar histórico</li>
-                    <li>• Avaliar serviços</li>
-                  </>
-                )}
-              </ul>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                onClick={() => navigate('/register')}
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-              >
-                Cadastrar outro usuário
-              </button>
-              
-              <button
-                onClick={() => navigate('/login')}
-                className="bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors"
-              >
-                Fazer login diferente
-              </button>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+      {viewingMachineId && (
+        <MachineDetailModal 
+          machineId={viewingMachineId}
+          onClose={() => setViewingMachineId(null)}
+        />
+      )}
+    </FormContainer>
   );
-}
+};
+
+export default HomePage;
+

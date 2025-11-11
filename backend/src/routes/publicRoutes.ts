@@ -105,6 +105,10 @@ router.get('/companies/:companyId/machines', authenticateToken, async (req: Auth
   }
 });
 
+import { getMachineStatus } from '../services/machineStatusService';
+
+// ... (other routes remain the same)
+
 // Status detalhado de uma máquina (para polling)
 router.get('/machines/:machineId/status', authenticateToken, async (req: AuthRequest, res) => {
   try {
@@ -117,71 +121,14 @@ router.get('/machines/:machineId/status', authenticateToken, async (req: AuthReq
       return res.status(400).json(errorResponse('ID de máquina inválido'));
     }
 
-    // Buscar máquina
-    const machine = await MachineModel.findById(machineIdNum);
-    if (!machine) {
-      return res.status(404).json(errorResponse('Máquina não encontrada'));
-    }
+    const status = await getMachineStatus(machineIdNum, userId, userType);
+    res.json(successResponse(status));
 
-    // Buscar uso atual
-    let currentUsage = null;
-    if (machine.status === 'em_uso') {
-      const usage = await MachineUsageModel.findActiveByMachine(machineIdNum);
-      
-      if (usage) {
-        const now = Date.now();
-        const endTime = new Date(usage.estimatedEndTime).getTime();
-        const timeRemaining = Math.max(0, Math.floor((endTime - now) / 1000 / 60));
-
-        currentUsage = {
-          estimatedEndTime: usage.estimatedEndTime,
-          timeRemaining
-        };
-      }
-    }
-
-    // Buscar fila
-    const { MachineQueueModel } = require('../models/MachineQueue');
-    const queue = await MachineQueueModel.findByMachine(machineIdNum);
-    
-    const queueSimplified = queue.map(q => ({
-      position: q.position,
-      status: q.status
-    }));
-
-    // Status do usuário (se fornecido)
-    let myStatus = null;
-    if (userId && userType === 'user') {
-      const { MachineUsageModel } = require('../models/MachineUsage');
-      const { MachineQueueModel } = require('../models/MachineQueue');
-      
-      const hasActiveUsage = await MachineUsageModel.hasActiveUsage(userId);
-      const queueEntry = await MachineQueueModel.findUserPosition(machineIdNum, userId);
-
-      myStatus = {
-        hasActiveUsage,
-        inQueue: !!queueEntry,
-        position: queueEntry?.position,
-        queueStatus: queueEntry?.status,
-        isNotified: queueEntry?.status === 'notificado',
-        expiresAt: queueEntry?.expiresAt
-      };
-    }
-
-    res.json(successResponse({
-      machine: {
-        id: machine.id,
-        name: machine.name,
-        type: machine.type,
-        status: machine.status,
-        defaultDuration: machine.defaultDuration
-      },
-      currentUsage,
-      queue: queueSimplified,
-      myStatus
-    }));
   } catch (err: any) {
     console.error('Erro ao buscar status da máquina:', err);
+    if (err.message === 'Máquina não encontrada') {
+      return res.status(404).json(errorResponse(err.message));
+    }
     res.status(500).json(errorResponse('Erro interno do servidor'));
   }
 });

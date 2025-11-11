@@ -14,6 +14,12 @@ import { openDb } from "./database";
 // Carregar variáveis de ambiente
 dotenv.config();
 
+// Verificação de variáveis de ambiente críticas
+if (!process.env.JWT_SECRET) {
+  console.error("❌ Variável de ambiente JWT_SECRET não definida. O servidor não pode iniciar com segurança.");
+  process.exit(1);
+}
+
 const app = express();
 
 // Middleware de segurança
@@ -50,21 +56,46 @@ app.get("/", (req, res) => {
   });
 });
 
+import http from "http";
+
+import { initSocket } from "./socket";
+
+import usageRoutes from "./routes/usageRoutes";
+import publicRoutes from "./routes/publicRoutes";
+
+import { BackgroundJobs } from "./services/backgroundJobs";
+
+// ... (imports and initial setup remain the same)
+
 // Rotas da API
 app.use("/api/users", userRoutes);
 app.use("/api/companies", companyRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/machines", machineRoutes); // NOVO
+app.use("/api/machines", machineRoutes);
+app.use("/api/usage", usageRoutes);
+app.use("/api/public", publicRoutes);
+app.use("/api/queue", queueRoutes); // Adicionar rota de fila
 
 // Middleware de tratamento de erros (deve ser o último)
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 4000;
+
+// Crie o servidor HTTP a partir do app Express
+const server = http.createServer(app);
+
+// Inicialize o Socket.IO
+initSocket(server);
+
 openDb().then(() => {
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`🚀 Servidor rodando na porta ${PORT}`);
+    console.log(`💡 Servidor WebSocket conectado`);
     console.log(`📊 Ambiente: ${process.env.NODE_ENV || 'development'}`);
     console.log(`🔗 URL: http://localhost:${PORT}`);
+
+    // Iniciar background jobs
+    BackgroundJobs.start();
   });
 }).catch(err => {
   console.error("❌ Erro ao conectar com o banco de dados:", err);

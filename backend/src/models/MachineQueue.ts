@@ -86,7 +86,7 @@ export class MachineQueueModel {
     const db = await getDb();
     const result = await db.get<{ count: number }>(
       `SELECT COUNT(*) as count FROM MachineQueue 
-       WHERE machineId = ? AND status = 'aguardando'`,
+       WHERE machineId = ? AND status IN ('aguardando', 'notificado')`,
       machineId
     );
     return result?.count ?? 0;

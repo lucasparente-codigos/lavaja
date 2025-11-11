@@ -352,6 +352,7 @@ GET    /api/machines/:id/status         # Status + fila
 ```
 
 ### Formato de Resposta
+
 ```typescript
 // Sucesso
 {
@@ -373,6 +374,7 @@ GET    /api/machines/:id/status         # Status + fila
 ## 🛣️ Roadmap
 
 ### ✅ Fase 1: Autenticação (Completo)
+
 - [x] Sistema de login/registro
 - [x] JWT com 24h de validade
 - [x] Diferenciação usuário/empresa
@@ -380,12 +382,14 @@ GET    /api/machines/:id/status         # Status + fila
 - [x] Rate limiting
 
 ### ✅ Fase 2: CRUD Básico (Completo)
+
 - [x] CRUD de usuários
 - [x] CRUD de empresas
 - [x] Validação robusta (Joi)
 - [x] Tratamento de erros
 
 ### 🚧 Fase 3: Sistema de Máquinas (Em Desenvolvimento)
+
 - [ ] CRUD de máquinas (empresa)
 - [ ] Status em tempo real
 - [ ] Timer híbrido (backend + frontend)
