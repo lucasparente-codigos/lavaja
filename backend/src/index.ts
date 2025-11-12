@@ -11,16 +11,14 @@ import authRoutes from "./routes/authRoutes";
 import machineRoutes from "./routes/machineRoutes";
 import usageRoutes from "./routes/usageRoutes";
 import publicRoutes from "./routes/publicRoutes";
-import queueRoutes from "./routes/queueRoutes"; // 🔥 ADICIONADO
+import queueRoutes from "./routes/queueRoutes";
 import { openDb } from "./database";
 import http from "http";
 import { initSocket } from "./socket";
 import { BackgroundJobs } from "./services/backgroundJobs";
 
-// Carregar variáveis de ambiente
 dotenv.config();
 
-// Verificação de variáveis de ambiente críticas
 if (!process.env.JWT_SECRET) {
   console.error("❌ Variável de ambiente JWT_SECRET não definida. O servidor não pode iniciar com segurança.");
   process.exit(1);
@@ -28,13 +26,11 @@ if (!process.env.JWT_SECRET) {
 
 const app = express();
 
-// Middleware de segurança
 app.use(helmet());
 
-// Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 100, // máximo 100 requests por IP
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: {
     success: false,
     error: "Muitas tentativas, tente novamente em 15 minutos"
@@ -69,9 +65,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/machines", machineRoutes);
 app.use("/api/usage", usageRoutes);
 app.use("/api/public", publicRoutes);
-app.use("/api/queue", queueRoutes); // 🔥 ADICIONADO
+app.use("/api/queue", queueRoutes);
 
-// Middleware de tratamento de erros (deve ser o último)
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 4000;

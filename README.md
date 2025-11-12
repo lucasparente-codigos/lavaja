@@ -2,9 +2,9 @@
 
 <div align="center">
 
-![LavaJá Logo](frontend/public/logo.jpeg)
+![LavaJá Logo](https://private-us-east-1.manuscdn.com/sessionFile/dDQ8Vrldw1La3DIefml8yy/sandbox/Kulk9UxR3rmiCkzwFlN7Yk-images_1762970623641_na1fn_L2hvbWUvdWJ1bnR1L2xhdmFqYS9mcm9udGVuZC9wdWJsaWMvbG9nbw.jpeg?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvZERROFZybGR3MUxhM0RJZWZtbDh5eS9zYW5kYm94L0t1bGs5VXhSM3JtaUNrendGbE43WWstaW1hZ2VzXzE3NjI5NzA2MjM2NDFfbmExZm5fTDJodmJXVXZkV0oxYm5SMUwyeGhkbUZxWVM5bWNtOXVkR1Z1WkM5d2RXSnNhV012Ykc5bmJ3LmpwZWciLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3OTg3NjE2MDB9fX1dfQ__&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=SMONKPRlImBYBlub8FtRWDZNXQ~VaskDMf8lI4uvrjeyihauUDjor30j4Fk9V7fulqA90G8uSdvP6bQhCJQTb43QPHlGzEGlx-W0MpbZnnvn53wRF4gDsMbMgtIE85j7Qnrcx~OctZlR8FVtHtyAk3CfGO0Gb4CHOSMkaLioy~rLTR3WUXOk7wC3pkFmyaNtKAOlglY2R8FOTxwOvJ9xJhXIiYs~Nozrkh~bPdyijVUXsEWb6BLf~yWDpfYwF8ZujFV-BFG12DcGeG2-ghq9i0vjUBw~fqvWqK73qIt7sKT5y4Gun8x3HEO05hR~u~mzmpmgFuWHVz0DJuQ0ZO4aoA__)
 
-**Sistema completo para gestão de máquinas de lavanderia com filas inteligentes**
+**Sistema completo para gestão de máquinas de lavanderia com status em tempo real e filas inteligentes**
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
@@ -33,44 +33,36 @@
 
 ## 🎯 Sobre o Projeto
 
-O **LavaJá** é uma plataforma fullstack que conecta usuários a lavanderias, permitindo:
-
-- 🏢 **Para Empresas**: Gerenciamento de máquinas em tempo real
-- 👤 **Para Usuários**: Visualização de disponibilidade e sistema de filas
-- ⏱️ **Tempo Real**: Atualização automática via polling (10s)
-- 🔐 **Seguro**: Autenticação JWT, hash bcrypt, rate limiting
+O **LavaJá** é uma plataforma fullstack que conecta usuários a lavanderias, oferecendo um sistema robusto de gerenciamento de máquinas e filas de espera.
 
 ### Problema Resolvido
 
-Elimina a necessidade de ligar para a lavanderia ou ir presencialmente verificar disponibilidade. Usuários visualizam máquinas disponíveis em tempo real e podem entrar em filas virtuais.
+O projeto elimina a necessidade de contato direto ou deslocamento para verificar a disponibilidade de máquinas. Usuários podem visualizar o status das máquinas em tempo real, entrar em filas virtuais e ser notificados quando for sua vez, otimizando o tempo e a experiência.
 
 ---
 
 ## ✨ Funcionalidades
 
 ### Para Empresas (Lavanderias)
-- ✅ Cadastro com CNPJ e validação
-- ✅ Dashboard com todas as máquinas
-- ✅ Adicionar/editar/deletar máquinas
-- ✅ Marcar máquinas como "em uso" ou "livre"
-- ✅ Visualizar fila de espera
-- ✅ Gerenciar tempo estimado de uso
+- ✅ **Cadastro e Gestão de Máquinas**: CRUD completo de máquinas (adicionar, editar, deletar).
+- ✅ **Dashboard de Status**: Visualização em tempo real do status de todas as máquinas (Livre, Em Uso, Em Fila).
+- ✅ **Controle de Uso**: Iniciar e finalizar o uso de máquinas manualmente.
+- ✅ **Gerenciamento de Filas**: Visualizar a fila de espera de cada máquina e dispensar usuários que não confirmarem o uso.
+- ✅ **Estatísticas**: Visualização de estatísticas básicas de uso das máquinas.
 
 ### Para Usuários
-- ✅ Cadastro simples e rápido
-- ✅ Visualizar empresas cadastradas
-- ✅ Ver máquinas disponíveis em tempo real
-- ✅ Entrar em fila de espera quando ocupado
-- ✅ Countdown visual do tempo restante
-- ✅ Notificação quando for sua vez
+- ✅ **Visualização em Tempo Real**: Ver o status e o tempo restante de uso das máquinas disponíveis.
+- ✅ **Sistema de Filas**: Entrar em uma fila de espera virtual para máquinas ocupadas.
+- ✅ **Notificação de Uso**: Ser notificado quando for o primeiro da fila e ter a opção de aceitar ou dispensar o uso da máquina.
+- ✅ **Controle de Uso Próprio**: Iniciar, finalizar ou cancelar o próprio uso da máquina.
+- ✅ **Autenticação Segura**: Login/Registro com autenticação JWT.
 
 ### Recursos Técnicos
-- 🔒 Autenticação JWT com 24h de validade
-- 🛡️ Rate limiting (100 req/15min)
-- ✅ Validação robusta com Joi
-- 🔄 Polling automático a cada 10s
-- 📱 Interface responsiva (Tailwind CSS)
-- 🗄️ Banco SQLite para desenvolvimento
+- 🔒 **Autenticação JWT** com validade de 24h.
+- 🛡️ **Segurança**: Rate limiting, validação robusta com Joi e hash de senhas com bcrypt.
+- 🔄 **Atualização de Status**: Uso de **WebSockets** (implementado via `socket.ts` e `broadcastMachineUpdate`) para atualizações de status de máquina e fila em tempo real.
+- 📱 **Interface Responsiva** (Tailwind CSS).
+- 🗄️ **Banco de Dados** SQLite para desenvolvimento.
 
 ---
 
@@ -80,6 +72,7 @@ Elimina a necessidade de ligar para a lavanderia ou ir presencialmente verificar
 - **Runtime**: Node.js + TypeScript
 - **Framework**: Express.js
 - **Banco de Dados**: SQLite + SQL puro
+- **Comunicação em Tempo Real**: WebSockets (via `ws` ou similar, conforme `socket.ts`)
 - **Autenticação**: JWT + bcrypt
 - **Validação**: Joi
 - **Segurança**: Helmet, CORS, express-rate-limit
@@ -90,11 +83,6 @@ Elimina a necessidade de ligar para a lavanderia ou ir presencialmente verificar
 - **Estilização**: Tailwind CSS 3
 - **HTTP Client**: Axios
 - **Build Tool**: Vite 7
-
-### DevOps
-- **Desenvolvimento**: ts-node-dev
-- **Gerenciamento**: npm/yarn
-- **Concorrência**: Concurrently (rodar backend + frontend)
 
 ---
 
@@ -119,31 +107,17 @@ git --version
 
 ### 1. Clone o repositório
 ```bash
-git clone https://github.com/seu-usuario/lavaja.git
+git clone https://github.com/lucasparente-codigos/lavaja.git
 cd lavaja
 ```
 
 ### 2. Instale as dependências
 
-#### Opção A: Instalação Raiz (recomendado)
-```bash
-npm install
-cd backend && npm install
-cd ../frontend && npm install
-cd ..
-```
+O projeto utiliza um workspace com `package.json` na raiz para gerenciar as dependências do `backend` e `frontend`.
 
-#### Opção B: Instalação Separada
 ```bash
-# Backend
-cd backend
+# Instala todas as dependências do projeto (raiz, backend e frontend)
 npm install
-cd ..
-
-# Frontend
-cd frontend
-npm install
-cd ..
 ```
 
 ---
@@ -218,22 +192,6 @@ cd frontend
 npm run dev
 ```
 
-### Produção
-
-#### Backend
-```bash
-cd backend
-npm run build
-npm start
-```
-
-#### Frontend
-```bash
-cd frontend
-npm run build
-npm run preview
-```
-
 ---
 
 ## 📁 Estrutura do Projeto
@@ -242,139 +200,64 @@ npm run preview
 lavaja/
 ├── backend/
 │   ├── src/
-│   │   ├── controllers/       # Lógica de negócio
-│   │   │   ├── authController.ts
-│   │   │   ├── userController.ts
-│   │   │   ├── companyController.ts
-│   │   │   └── machineController.ts   # [PRÓXIMO]
-│   │   ├── models/            # Modelos de dados
-│   │   │   ├── User.ts
-│   │   │   ├── Company.ts
-│   │   │   ├── Machine.ts             # [PRÓXIMO]
-│   │   │   └── MachineQueue.ts        # [PRÓXIMO]
+│   │   ├── controllers/       # Lógica de negócio (Auth, Company, Machine, Queue, Usage, User)
+│   │   ├── models/            # Modelos de dados (Company, Machine, MachineQueue, MachineUsage, User)
 │   │   ├── routes/            # Definição de rotas
-│   │   │   ├── authRoutes.ts
-│   │   │   ├── userRoutes.ts
-│   │   │   ├── companyRoutes.ts
-│   │   │   └── machineRoutes.ts       # [PRÓXIMO]
-│   │   ├── middleware/        # Middlewares
-│   │   │   ├── auth.ts
-│   │   │   └── errorHandler.ts
+│   │   ├── services/          # Lógica de negócio complexa (QueueService, UsageService, backgroundJobs)
+│   │   ├── middleware/        # Middlewares (auth, errorHandler)
 │   │   ├── utils/             # Utilitários
-│   │   │   ├── validation.ts
-│   │   │   ├── password.ts
-│   │   │   └── response.ts
 │   │   ├── database.ts        # Configuração do banco
+│   │   ├── socket.ts          # Configuração de WebSockets para tempo real
 │   │   └── index.ts           # Entry point
 │   ├── data/                  # Banco SQLite
-│   │   └── dev.db
 │   ├── .env                   # Variáveis de ambiente
-│   ├── package.json
-│   └── tsconfig.json
+│   └── ...
 │
 ├── frontend/
-│   ├── public/
-│   │   └── logo.jpeg          # Logo da aplicação
 │   ├── src/
 │   │   ├── api/               # Configuração HTTP
-│   │   │   └── api.ts
 │   │   ├── components/        # Componentes reutilizáveis
-│   │   │   ├── Header.tsx
-│   │   │   ├── Footer.tsx
-│   │   │   ├── Button.tsx
-│   │   │   ├── Card.tsx
-│   │   │   └── InputField.tsx
-│   │   ├── context/           # Context API
-│   │   │   └── AuthContext.tsx
-│   │   ├── pages/             # Páginas da aplicação
-│   │   │   ├── LoginPage.tsx
-│   │   │   ├── RegisterPage.tsx
-│   │   │   ├── RegisterUser.tsx
-│   │   │   ├── RegisterCompany.tsx
-│   │   │   ├── HomePage.tsx
-│   │   │   └── DashboardPage.tsx      # [PRÓXIMO]
-│   │   ├── App.tsx            # App principal
-│   │   ├── main.tsx           # Entry point
-│   │   └── styles.css         # Tailwind
+│   │   ├── context/           # Context API (AuthContext)
+│   │   ├── pages/             # Páginas da aplicação (Login, Register, Dashboard, Home)
+│   │   └── ...
 │   ├── .env.local             # Variáveis de ambiente
-│   ├── package.json
-│   ├── tsconfig.json
-│   └── vite.config.ts
+│   └── ...
 │
 ├── package.json               # Scripts raiz
-├── README.md
-└── .gitignore
+└── README.md
 ```
 
 ---
 
 ## 🔌 API Endpoints
 
-### Autenticação
-```http
-POST /api/auth/login
-Content-Type: application/json
+O projeto implementa as seguintes funcionalidades completas:
 
-{
-  "email": "usuario@exemplo.com",
-  "password": "Senha123"
-}
-```
-
-### Usuários
-```http
-POST   /api/users/register      # Cadastrar usuário
-GET    /api/users               # Listar usuários (requer auth)
-DELETE /api/users/:id           # Deletar usuário (requer auth)
-```
-
-### Empresas
-```http
-POST   /api/companies/register  # Cadastrar empresa
-GET    /api/companies           # Listar empresas (requer auth)
-DELETE /api/companies/:id       # Deletar empresa (requer auth)
-```
-
-### Máquinas [EM DESENVOLVIMENTO]
-```http
-POST   /api/machines                    # Criar máquina
-GET    /api/machines                    # Listar minhas máquinas
-PUT    /api/machines/:id                # Editar máquina
-DELETE /api/machines/:id                # Deletar máquina
-POST   /api/machines/:id/start          # Marcar como "em uso"
-POST   /api/machines/:id/finish         # Marcar como "livre"
-
-GET    /api/public/companies            # Listar empresas (público)
-GET    /api/public/companies/:id        # Ver máquinas da empresa
-POST   /api/queue/join/:machineId       # Entrar na fila
-DELETE /api/queue/leave/:machineId      # Sair da fila
-GET    /api/machines/:id/status         # Status + fila
-```
-
-### Formato de Resposta
-
-```typescript
-// Sucesso
-{
-  "success": true,
-  "data": { ... },
-  "message": "Operação realizada com sucesso"
-}
-
-// Erro
-{
-  "success": false,
-  "error": "Mensagem de erro",
-  "details": ["Detalhes opcionais"]
-}
-```
+| Funcionalidade | Endpoint | Método | Descrição |
+| :--- | :--- | :--- | :--- |
+| **Autenticação** | `/api/auth/login` | `POST` | Login de usuário/empresa. |
+| **Usuário** | `/api/users/register` | `POST` | Cadastro de novo usuário. |
+| **Empresa** | `/api/companies/register` | `POST` | Cadastro de nova empresa. |
+| **Máquinas (Empresa)** | `/api/machines` | `POST` | Cria uma nova máquina. |
+| | `/api/machines` | `GET` | Lista as máquinas da empresa autenticada. |
+| | `/api/machines/:id` | `PUT` | Atualiza os dados de uma máquina. |
+| | `/api/machines/:id` | `DELETE` | Deleta uma máquina. |
+| **Uso (Usuário)** | `/api/usage/start/:machineId` | `POST` | Inicia o uso de uma máquina (se livre ou após aceitar fila). |
+| | `/api/usage/finish/:usageId` | `POST` | Finaliza um uso ativo (usuário ou empresa). |
+| | `/api/usage/cancel` | `POST` | Cancela o uso ativo do usuário. |
+| **Fila (Usuário)** | `/api/queue/join/:machineId` | `POST` | Entra na fila de espera da máquina. |
+| | `/api/queue/leave/:machineId` | `DELETE` | Sai da fila de espera. |
+| | `/api/queue/confirm/:machineId` | `POST` | Confirma ou dispensa o uso após ser notificado. |
+| **Público** | `/api/public/companies` | `GET` | Lista todas as empresas cadastradas. |
+| | `/api/public/companies/:id` | `GET` | Lista as máquinas de uma empresa específica com status. |
 
 ---
 
 ## 🛣️ Roadmap
 
-### ✅ Fase 1: Autenticação (Completo)
+O projeto está em uma fase avançada de desenvolvimento, com as funcionalidades centrais de gerenciamento de máquinas e filas já implementadas.
 
+### ✅ Fase 1: Autenticação (Completo)
 - [x] Sistema de login/registro
 - [x] JWT com 24h de validade
 - [x] Diferenciação usuário/empresa
@@ -382,48 +265,40 @@ GET    /api/machines/:id/status         # Status + fila
 - [x] Rate limiting
 
 ### ✅ Fase 2: CRUD Básico (Completo)
-
 - [x] CRUD de usuários
 - [x] CRUD de empresas
 - [x] Validação robusta (Joi)
 - [x] Tratamento de erros
 
-### 🚧 Fase 3: Sistema de Máquinas (Em Desenvolvimento)
+### ✅ Fase 3: Sistema de Máquinas (Completo)
+- [x] CRUD de máquinas (empresa)
+- [x] Status em tempo real (via WebSockets)
+- [x] Controle de uso (iniciar/finalizar)
+- [x] Listagem pública de empresas/máquinas
 
-- [ ] CRUD de máquinas (empresa)
-- [ ] Status em tempo real
-- [ ] Timer híbrido (backend + frontend)
-- [ ] Listagem pública de empresas/máquinas
+### ✅ Fase 4: Sistema de Filas (Completo)
+- [x] Fila de espera por máquina
+- [x] Notificação "sua vez" (via polling/WebSockets)
+- [x] Gerenciamento de posições
+- [x] Auto-avançar fila ao finalizar
 
-### 📅 Fase 4: Sistema de Filas (Próximo)
-- [ ] Fila de espera por máquina
-- [ ] Notificação "sua vez"
-- [ ] Gerenciamento de posições
-- [ ] Auto-avançar fila ao finalizar
-
-### 🔮 Fase 5: Melhorias Futuras
-- [ ] WebSocket para tempo real
-- [ ] Notificações push
-- [ ] Histórico de usos
-- [ ] Avaliações e comentários
-- [ ] Geolocalização de lavanderias
-- [ ] Integração com pagamentos
-- [ ] Dashboard analytics para empresas
-- [ ] App mobile (React Native)
+### 🚧 Fase 5: Melhorias Futuras (Em Desenvolvimento)
+- [ ] Implementação completa de WebSockets para substituir o polling (atualmente híbrido).
+- [ ] Notificações push para usuários.
+- [ ] Histórico de usos e relatórios.
+- [ ] Geolocalização de lavanderias.
+- [ ] Integração com pagamentos.
+- [ ] Dashboard analytics para empresas.
+- [ ] App mobile (React Native).
 
 ---
 
 ## 🐛 Problemas Conhecidos
 
-### Corrigidos Recentemente
-- ✅ Validação de CNPJ (agora aceita ambos formatos)
-- ✅ Validação de senha no frontend
-- ✅ Caminho da logo em produção
-
 ### Em Investigação    
-- ⚠️ Token expira sem refresh automático
-- ⚠️ Sem paginação nas listagens
-- ⚠️ Polling constante (consumo de rede)
+- ⚠️ Token expira sem refresh automático.
+- ⚠️ Sem paginação nas listagens.
+- ⚠️ Polling ainda é usado em algumas partes, deve ser substituído totalmente por WebSockets.
 
 ---
 
@@ -482,5 +357,3 @@ Encontrou um bug? Tem uma sugestão?
 - [Express](https://expressjs.com/) - Framework backend
 - [Tailwind CSS](https://tailwindcss.com/) - Framework CSS
 - [TypeScript](https://www.typescriptlang.org/) - Superset JavaScript
-
----
