@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { hashPassword } from '../utils/password';
 import { successResponse, errorResponse } from '../utils/response';
 import { CompanyModel } from '../models/Company';
+import { MachineModel } from '../models/Machine';
 
 export const registerCompany = async (req: Request, res: Response) => {
   try {
@@ -56,12 +57,18 @@ export const listCompanies = async (req: Request, res: Response) => {
 };
 
 export const deleteCompany = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const companyId = parseInt(id, 10);
+  const { id } = req.params;
+  const companyId = parseInt(id, 10);
 
-    if (isNaN(companyId)) {
-      return res.status(400).json(errorResponse('ID de empresa inválido'));
+  if (isNaN(companyId)) {
+    return res.status(400).json(errorResponse('ID de empresa inválido'));
+  }
+
+  try {
+    const machines = await MachineModel.findByCompany(companyId);
+
+    if (machines.length > 0) {
+      return res.status(400).json(errorResponse('Não é possível deletar uma empresa com máquinas associadas.'));
     }
 
     const deleted = await CompanyModel.delete(companyId);
