@@ -6,7 +6,7 @@ import { CompanyModel } from '../models/Company';
 
 export const registerCompany = async (req: Request, res: Response) => {
   try {
-    let { name, email, cnpj, password } = req.body;
+    let { name, email, cnpj, password, phoneNumber } = req.body;
     
     // Remover formatação do CNPJ (pontos, barras e hífens)
     cnpj = cnpj.replace(/\D/g, '');
@@ -31,7 +31,8 @@ export const registerCompany = async (req: Request, res: Response) => {
       name, 
       email, 
       cnpj, 
-      password: hashedPassword 
+      password: hashedPassword,
+      phoneNumber
     });
 
     // Remover a senha do objeto de retorno

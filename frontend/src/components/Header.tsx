@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Header: React.FC = () => {
   const { user, logout } = useAuth();
@@ -28,24 +28,25 @@ const Header: React.FC = () => {
           {/* Navegação e Perfil */}
           <div className="flex items-center space-x-4">
             <nav className="hidden md:flex space-x-1">
-              <a 
-                href="/home" 
-                className="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-              >
-                Home
-              </a>
-              {user?.type === 'company' && (
-                <a 
-                  href="/dashboard" 
+              {user?.type === 'company' ? (
+                <Link 
+                  to="/dashboard" 
                   className="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                 >
                   Dashboard
-                </a>
+                </Link>
+              ) : (
+                <Link 
+                  to="/home" 
+                  className="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                >
+                  Home
+                </Link>
               )}
             </nav>
 
             {user && (
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-4">
                 <div className="hidden sm:block text-right">
                   <p className="text-sm font-medium text-gray-700">
                     {user.name.split(' ')[0]}
@@ -54,6 +55,12 @@ const Header: React.FC = () => {
                     {user.type === 'user' ? 'Cliente' : 'Empresa'}
                   </p>
                 </div>
+                <Link
+                  to="/profile"
+                  className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                >
+                  Meu Perfil
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm"

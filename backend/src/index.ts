@@ -12,6 +12,7 @@ import machineRoutes from "./routes/machineRoutes";
 import usageRoutes from "./routes/usageRoutes";
 import publicRoutes from "./routes/publicRoutes";
 import queueRoutes from "./routes/queueRoutes";
+import profileRoutes from "./routes/profileRoutes";
 import { openDb } from "./database";
 import http from "http";
 import { initSocket } from "./socket";
@@ -66,6 +67,7 @@ app.use("/api/machines", machineRoutes);
 app.use("/api/usage", usageRoutes);
 app.use("/api/public", publicRoutes);
 app.use("/api/queue", queueRoutes);
+app.use("/api/profile", profileRoutes);
 
 app.use(errorHandler);
 

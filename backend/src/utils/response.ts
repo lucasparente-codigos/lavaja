@@ -11,7 +11,7 @@ export const successResponse = <T>(data: T, message?: string): ApiResponse<T> =>
   message
 });
 
-export const errorResponse = (error: string, statusCode: number = 400): ApiResponse => ({
+export const errorResponse = (error: string): ApiResponse => ({
   success: false,
   error
 });

@@ -5,7 +5,7 @@ import { UserModel } from '../models/User';
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, phoneNumber } = req.body;
     
     // Verificar se usuário já existe
     const existingUser = await UserModel.findByEmail(email);
@@ -20,7 +20,8 @@ export const registerUser = async (req: Request, res: Response) => {
     const user = await UserModel.create({ 
       name, 
       email, 
-      password: hashedPassword 
+      password: hashedPassword,
+      phoneNumber
     });
 
     // Remover a senha do objeto de retorno

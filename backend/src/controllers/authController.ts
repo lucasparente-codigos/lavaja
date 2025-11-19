@@ -1,49 +1,51 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { verifyPassword } from '../utils/password';
-import { successResponse, errorResponse } from '../utils/response';
+import { successResponse } from '../utils/response';
 import jwt from 'jsonwebtoken';
 import { UserModel, UserWithPassword } from '../models/User';
 import { CompanyModel, CompanyWithPassword } from '../models/Company';
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
-    
-    // Buscar usuário por email (com senha para verificação)
+
     const user = await UserModel.findByEmailWithPassword(email);
     const company = await CompanyModel.findByEmailWithPassword(email);
-    
+
     const account: UserWithPassword | CompanyWithPassword | undefined = user || company;
-    const accountType = user ? 'user' : 'company';
     
     if (!account) {
-      return res.status(401).json(errorResponse('Email ou senha incorretos'));
+      // Lança um erro que será capturado pelo errorHandler
+      const err: any = new Error('Email ou senha incorretos');
+      err.status = 401;
+      throw err;
     }
 
-    // Verificar senha
     const isPasswordValid = await verifyPassword(password, account.password);
     if (!isPasswordValid) {
-      return res.status(401).json(errorResponse('Email ou senha incorretos'));
+      const err: any = new Error('Email ou senha incorretos');
+      err.status = 401;
+      throw err;
     }
 
-    // Gerar token JWT
+    const accountType = user ? 'user' : 'company';
+
     const token = jwt.sign(
       { 
         id: account.id, 
         email: account.email, 
         type: accountType 
       },
-      process.env.JWT_SECRET as string, // Remove fallback inseguro
+      process.env.JWT_SECRET!, // O '!' afirma que a variável foi verificada no index.ts
       { expiresIn: '24h' }
     );
 
-    // Retornar dados do usuário (sem senha)
     const userData = {
       id: account.id,
       name: account.name,
       email: account.email,
+      phoneNumber: account.phoneNumber,
       type: accountType,
-      // Uso de type guard para acesso seguro ao cnpj
       ...(accountType === 'company' && (account as CompanyWithPassword).cnpj && { cnpj: (account as CompanyWithPassword).cnpj })
     };
 
@@ -52,8 +54,8 @@ export const login = async (req: Request, res: Response) => {
       user: userData
     }, 'Login realizado com sucesso'));
 
-  } catch (err: any) {
-    console.error('Erro ao fazer login:', err);
-    res.status(500).json(errorResponse('Erro interno do servidor'));
+  } catch (err) {
+    // Delega o erro para o middleware de tratamento de erros
+    next(err);
   }
 };

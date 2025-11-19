@@ -12,6 +12,10 @@ export const userSchema = Joi.object({
     'string.email': 'Email deve ter um formato válido',
     'any.required': 'Email é obrigatório'
   }),
+  phoneNumber: Joi.string().pattern(/^\+55\d{10,11}$/).required().messages({
+    'string.pattern.base': 'Número de celular deve estar no formato +55DDXXXXXXXXX',
+    'any.required': 'Número de celular é obrigatório'
+  }),
   password: Joi.string().min(6).pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).required().messages({
     'string.min': 'Senha deve ter pelo menos 6 caracteres',
     'string.pattern.base': 'Senha deve conter pelo menos uma letra minúscula, uma maiúscula e um número',
@@ -32,6 +36,9 @@ export const companySchema = Joi.object({
   cnpj: Joi.string().pattern(/^\d{14}$/).required().messages({
     'string.pattern.base': 'CNPJ deve conter exatamente 14 dígitos',
     'any.required': 'CNPJ é obrigatório'
+  }),
+  phoneNumber: Joi.string().pattern(/^\+55\d{10,11}$/).optional().messages({
+    'string.pattern.base': 'Número de celular deve estar no formato +55DDXXXXXXXXX',
   }),
   password: Joi.string().min(6).pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).required().messages({
     'string.min': 'Senha deve ter pelo menos 6 caracteres',

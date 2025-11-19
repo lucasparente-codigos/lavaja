@@ -13,7 +13,7 @@ export interface CompanyWithPassword extends Company {
 export class CompanyModel {
   static async findByEmail(email: string): Promise<Company | undefined> {
     const db = await getDb();
-    return db.get<Company>('SELECT id, name, email, cnpj, createdAt FROM Company WHERE email = ?', email);
+    return db.get<Company>('SELECT id, name, email, cnpj, phoneNumber, createdAt FROM Company WHERE email = ?', email);
   }
 
   static async findByEmailWithPassword(email: string): Promise<CompanyWithPassword | undefined> {
@@ -29,14 +29,15 @@ export class CompanyModel {
   static async create(data: Omit<CompanyWithPassword, 'id' | 'createdAt'>): Promise<Company> {
     const db = await getDb();
     const result = await db.run(
-      'INSERT INTO Company (name, email, cnpj, password) VALUES (?, ?, ?, ?)',
+      'INSERT INTO Company (name, email, cnpj, password, phoneNumber) VALUES (?, ?, ?, ?, ?)',
       data.name,
       data.email,
       data.cnpj,
-      data.password
+      data.password,
+      data.phoneNumber
     );
 
-    const newCompany = await db.get<Company>('SELECT id, name, email, cnpj, createdAt FROM Company WHERE id = ?', result.lastID);
+    const newCompany = await db.get<Company>('SELECT id, name, email, cnpj, phoneNumber, createdAt FROM Company WHERE id = ?', result.lastID);
 
     if (!newCompany) {
       throw new Error('Falha ao criar empresa');
@@ -47,17 +48,38 @@ export class CompanyModel {
 
   static async findById(id: number): Promise<Company | undefined> {
     const db = await getDb();
-    return db.get<Company>('SELECT id, name, email, cnpj, createdAt FROM Company WHERE id = ?', id);
+    return db.get<Company>('SELECT id, name, email, cnpj, phoneNumber, createdAt FROM Company WHERE id = ?', id);
   }
 
   static async findAll(): Promise<Company[]> {
     const db = await getDb();
-    return db.all<Company[]>('SELECT id, name, email, cnpj, createdAt FROM Company');
+    return db.all<Company[]>('SELECT id, name, email, cnpj, phoneNumber, createdAt FROM Company');
   }
 
   static async delete(id: number): Promise<boolean> {
     const db = await getDb();
     const result = await db.run('DELETE FROM Company WHERE id = ?', id);
     return result.changes === 1;
+  }
+
+  static async update(id: number, data: Partial<Omit<CompanyWithPassword, 'id' | 'createdAt' | 'email' | 'cnpj'>>): Promise<Company | undefined> {
+    const db = await getDb();
+    
+    const fields = Object.keys(data);
+    const values = Object.values(data);
+
+    if (fields.length === 0) {
+      return this.findById(id);
+    }
+
+    const setClause = fields.map(field => `${field} = ?`).join(', ');
+
+    const result = await db.run(`UPDATE Company SET ${setClause} WHERE id = ?`, [...values, id]);
+
+    if ((result.changes ?? 0) === 0) {
+      return undefined;
+    }
+
+    return this.findById(id);
   }
 }

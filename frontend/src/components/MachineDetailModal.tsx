@@ -35,6 +35,7 @@ export const MachineDetailModal: React.FC<MachineDetailModalProps> = ({ machineI
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
+  const [isStartingUsage, setIsStartingUsage] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -109,6 +110,21 @@ export const MachineDetailModal: React.FC<MachineDetailModalProps> = ({ machineI
     }
   };
 
+  const handleStartUsage = async () => {
+    setIsStartingUsage(true);
+    try {
+      const response = await api.post(`/usage/start/${machineId}`);
+      if (!response.data.success) {
+        alert(`Erro: ${response.data.error}`);
+      }
+      // On success, do nothing. The WebSocket 'statusUpdate' will refresh the component.
+    } catch (err) {
+      alert('Não foi possível iniciar o uso da máquina.');
+    } finally {
+      setIsStartingUsage(false);
+    }
+  };
+
   const renderContent = () => {
     if (loading) return <p>Carregando detalhes...</p>;
     if (error) return <p className="text-red-500">{error}</p>;
@@ -143,7 +159,13 @@ export const MachineDetailModal: React.FC<MachineDetailModalProps> = ({ machineI
             <Button onClick={handleLeaveQueue} variant="danger">Sair da Fila</Button>
           )}
           {machine.status === 'disponivel' && (
-             <p className="text-green-600 font-bold">Máquina disponível para uso!</p>
+            <Button 
+              onClick={handleStartUsage} 
+              variant="primary"
+              disabled={isStartingUsage}
+            >
+              {isStartingUsage ? 'Iniciando...' : 'Iniciar Uso'}
+            </Button>
           )}
         </div>
       </div>

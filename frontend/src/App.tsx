@@ -7,6 +7,7 @@ import RegisterUser from './pages/RegisterUser';
 import RegisterCompany from './pages/RegisterCompany';
 import HomePage from './pages/HomePage';
 import DashboardPage from './pages/DashboardPage';
+import ProfilePage from './pages/ProfilePage';
 import Header from './components/Header';
 import Footer from './components/Footer';
 
@@ -39,13 +40,17 @@ export default function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Navigate to={homePath} replace />} />
-            <Route path="/home" element={<HomePage />} />
+            <Route 
+              path="/home" 
+              element={user?.type !== 'company' ? <HomePage /> : <Navigate to="/dashboard" replace />} 
+            />
             
             {/* Rota de Dashboard apenas para empresas */}
             <Route 
               path="/dashboard" 
               element={user?.type === 'company' ? <DashboardPage /> : <Navigate to="/home" replace />} 
             />
+            <Route path="/profile" element={<ProfilePage />} />
 
             {/* Redireciona rotas de login/registro para a home apropriada se já estiver autenticado */}
             <Route path="/login" element={<Navigate to={homePath} replace />} />

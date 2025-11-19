@@ -4,6 +4,7 @@ import { User } from '../types';
 // Tipos de dados
 interface AuthContextType {
   user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>; // Adicionado
   token: string | null;
   isAuthenticated: boolean;
   login: (token: string, userData: User) => void;
@@ -49,15 +50,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     if (user && token) {
       localStorage.setItem('user', JSON.stringify(user));
-      localStorage.setItem('token', token);
     } else {
+      // Não remover o token aqui, pois o logout já faz isso.
+      // Apenas garante que o usuário seja removido se ficar nulo por outra razão.
       localStorage.removeItem('user');
-      localStorage.removeItem('token');
     }
-  }, [user, token]);
+  }, [user]);
 
   return (
-    <AuthContext.Provider value={{ user, token, isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ user, setUser, token, isAuthenticated, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

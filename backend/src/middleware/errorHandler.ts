@@ -1,45 +1,39 @@
 import { Request, Response, NextFunction } from 'express';
+import { errorResponse } from '../utils/response';
 
-export interface ApiResponse<T = any> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
+// Interface para erros com mais detalhes, como erros de validação
+interface DetailedError {
+  field: string;
+  message: string;
 }
 
 export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
   console.error('Error:', err);
-  
-  // Prisma unique constraint error
+
+  // Erro de constraint única do Prisma (ex: email duplicado)
   if (err.code === 'P2002') {
-    return res.status(400).json({ 
-      success: false,
-      error: 'Email já cadastrado',
-      field: 'email' 
-    });
+    const field = err.meta?.target?.[0] || 'unknown';
+    const message = `O campo '${field}' já está em uso.`;
+    return res.status(409).json(errorResponse(message));
   }
-  
-  // Prisma record not found
+
+  // Erro de registro não encontrado do Prisma
   if (err.code === 'P2025') {
-    return res.status(404).json({ 
-      success: false,
-      error: 'Registro não encontrado' 
-    });
+    return res.status(404).json(errorResponse('O registro solicitado não foi encontrado.'));
   }
-  
-  // Validation error
+
+  // Erro de validação do Joi
   if (err.isJoi) {
-    return res.status(400).json({ 
-      success: false,
-      error: 'Dados inválidos',
-      details: err.details 
-    });
+    const errorMessage = err.details[0].message;
+    return res.status(400).json(errorResponse(errorMessage || 'Dados de entrada inválidos.'));
   }
-  
-  // Default error
-  res.status(500).json({ 
-    success: false,
-    error: 'Erro interno do servidor',
-    message: process.env.NODE_ENV === 'development' ? err.message : undefined
-  });
+
+  // Erro de JWT (token inválido, expirado, etc.)
+  if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
+    return res.status(401).json(errorResponse(err.message || 'Token inválido ou expirado.'));
+  }
+
+  // Erro padrão
+  const message = process.env.NODE_ENV === 'development' ? err.message : 'Ocorreu um erro inesperado.';
+  res.status(err.status || 500).json(errorResponse(message));
 };

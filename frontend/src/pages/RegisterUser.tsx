@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import api from '../api/api';
-import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 interface FormData {
   name: string;
   email: string;
+  phoneNumber: string;
   password: string;
   confirmPassword: string;
 }
@@ -13,6 +13,7 @@ interface FormData {
 interface FormErrors {
   name?: string;
   email?: string;
+  phoneNumber?: string;
   password?: string;
   confirmPassword?: string;
 }
@@ -21,6 +22,7 @@ export default function RegisterUser() {
   const [form, setForm] = useState<FormData>({ 
     name: '', 
     email: '', 
+    phoneNumber: '',
     password: '', 
     confirmPassword: '' 
   });
@@ -29,6 +31,14 @@ export default function RegisterUser() {
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
+  const formatPhoneNumber = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    if (numbers.length === 0) return '';
+    if (numbers.length <= 2) return `+${numbers}`;
+    if (numbers.length <= 4) return `+${numbers.slice(0, 2)} (${numbers.slice(2)}`;
+    if (numbers.length <= 9) return `+${numbers.slice(0, 2)} (${numbers.slice(2, 4)}) ${numbers.slice(4)}`;
+    return `+${numbers.slice(0, 2)} (${numbers.slice(2, 4)}) ${numbers.slice(4, 9)}-${numbers.slice(9, 13)}`;
+  };
 
   const validatePassword = (password: string): boolean => {
     const hasLowerCase = /[a-z]/.test(password);
@@ -38,36 +48,43 @@ export default function RegisterUser() {
   };
 
   const validateForm = (): boolean => {
-  const newErrors: FormErrors = {};
+    const newErrors: FormErrors = {};
 
-  if (!form.name.trim()) {
-    newErrors.name = 'Nome é obrigatório';
-  } else if (form.name.trim().length < 2) {
-    newErrors.name = 'Nome deve ter pelo menos 2 caracteres';
-  }
+    if (!form.name.trim()) {
+      newErrors.name = 'Nome é obrigatório';
+    } else if (form.name.trim().length < 2) {
+      newErrors.name = 'Nome deve ter pelo menos 2 caracteres';
+    }
 
-  if (!form.email.trim()) {
-    newErrors.email = 'Email é obrigatório';
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-    newErrors.email = 'Email inválido';
-  }
+    if (!form.email.trim()) {
+      newErrors.email = 'Email é obrigatório';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      newErrors.email = 'Email inválido';
+    }
 
-  if (!form.password) {
-    newErrors.password = 'Senha é obrigatória';
-  } else if (form.password.length < 6) {
-    newErrors.password = 'Senha deve ter pelo menos 6 caracteres';
-  } else if (!validatePassword(form.password)) {
-    newErrors.password = 'Senha deve conter pelo menos uma letra minúscula, uma maiúscula e um número';
-  }
+    const phoneNumbers = form.phoneNumber.replace(/\D/g, '');
+    if (!phoneNumbers) {
+      newErrors.phoneNumber = 'Número de celular é obrigatório';
+    } else if (!/^\d{12,13}$/.test(phoneNumbers)) {
+      newErrors.phoneNumber = 'Número de celular inválido. Use o formato +55DDXXXXXXXXX.';
+    }
 
-  if (!form.confirmPassword) {
-    newErrors.confirmPassword = 'Confirmação de senha é obrigatória';
-  } else if (form.password !== form.confirmPassword) {
-    newErrors.confirmPassword = 'Senhas não coincidem';
-  }
+    if (!form.password) {
+      newErrors.password = 'Senha é obrigatória';
+    } else if (form.password.length < 6) {
+      newErrors.password = 'Senha deve ter pelo menos 6 caracteres';
+    } else if (!validatePassword(form.password)) {
+      newErrors.password = 'Senha deve conter pelo menos uma letra minúscula, uma maiúscula e um número';
+    }
 
-  setErrors(newErrors);
-  return Object.keys(newErrors).length === 0;
+    if (!form.confirmPassword) {
+      newErrors.confirmPassword = 'Confirmação de senha é obrigatória';
+    } else if (form.password !== form.confirmPassword) {
+      newErrors.confirmPassword = 'Senhas não coincidem';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -82,11 +99,12 @@ export default function RegisterUser() {
       await api.post('/users/register', {
         name: form.name.trim(),
         email: form.email.trim(),
+        phoneNumber: `+${form.phoneNumber.replace(/\D/g, '')}`,
         password: form.password
       });
       
       setSuccess(true);
-      setForm({ name: '', email: '', password: '', confirmPassword: '' });
+      setForm({ name: '', email: '', phoneNumber: '', password: '', confirmPassword: '' });
       setErrors({});
     } catch (err: any) {
       const errorMessage = err?.response?.data?.error || 'Erro ao cadastrar usuário';
@@ -97,8 +115,10 @@ export default function RegisterUser() {
   };
 
   const handleInputChange = (field: keyof FormData, value: string) => {
+    if (field === 'phoneNumber') {
+      value = formatPhoneNumber(value);
+    }
     setForm(prev => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
@@ -196,6 +216,39 @@ export default function RegisterUser() {
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
             </svg>
             {errors.email}
+          </p>
+        )}
+      </div>
+
+      {/* Phone Number */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          Celular
+        </label>
+        <div className="relative">
+          <input
+            type="tel"
+            value={form.phoneNumber}
+            onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
+            className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 ${
+              errors.phoneNumber 
+                ? 'border-red-300 bg-red-50' 
+                : 'border-gray-300 focus:border-blue-500'
+            }`}
+            placeholder="+55 (DD) XXXXX-XXXX"
+          />
+          <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+          </div>
+        </div>
+        {errors.phoneNumber && (
+          <p className="mt-2 text-sm text-red-600 flex items-center">
+            <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+            {errors.phoneNumber}
           </p>
         )}
       </div>

@@ -17,6 +17,7 @@ export async function openDb() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       email TEXT UNIQUE NOT NULL,
+      phoneNumber TEXT UNIQUE NOT NULL,
       password TEXT NOT NULL,
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     );
@@ -28,6 +29,7 @@ export async function openDb() {
       name TEXT NOT NULL,
       email TEXT UNIQUE NOT NULL,
       cnpj TEXT UNIQUE NOT NULL,
+      phoneNumber TEXT,
       password TEXT NOT NULL,
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     );
@@ -100,6 +102,23 @@ export async function openDb() {
     CREATE UNIQUE INDEX IF NOT EXISTS idx_queue_unique_user_machine 
     ON MachineQueue(machineId, userId) 
     WHERE status IN ('aguardando', 'notificado');
+  `);
+
+  // Tabela para armazenar tokens de reset de senha
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS PasswordResetToken (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId INTEGER NOT NULL,
+      userType TEXT NOT NULL CHECK(userType IN ('user', 'company')),
+      token TEXT NOT NULL UNIQUE,
+      expiresAt DATETIME NOT NULL,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  // Índice para buscar tokens rapidamente
+  await db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_password_reset_token ON PasswordResetToken(token);
   `);
 
   return db;

@@ -142,7 +142,11 @@ export class MachineModel {
     );
 
     const updatedMachine = await this.findById(id);
-    return updatedMachine || null; // CORREÇÃO AQUI
+    if (!updatedMachine) {
+      throw new Error('Falha ao buscar máquina após atualização');
+    }
+
+    return updatedMachine;
   }
 
   // Deletar máquina
