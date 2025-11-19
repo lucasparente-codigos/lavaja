@@ -9,13 +9,15 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
   try {
     const { email, password } = req.body;
 
-    const user = await UserModel.findByEmailWithPassword(email);
-    const company = await CompanyModel.findByEmailWithPassword(email);
+    let account: UserWithPassword | CompanyWithPassword | null | undefined = await UserModel.findByEmailWithPassword(email);
+    let accountType: 'user' | 'company' = 'user';
 
-    const account: UserWithPassword | CompanyWithPassword | undefined = user || company;
+    if (!account) {
+      account = await CompanyModel.findByEmailWithPassword(email);
+      accountType = 'company';
+    }
     
     if (!account) {
-      // Lança um erro que será capturado pelo errorHandler
       const err: any = new Error('Email ou senha incorretos');
       err.status = 401;
       throw err;
@@ -28,15 +30,13 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       throw err;
     }
 
-    const accountType = user ? 'user' : 'company';
-
     const token = jwt.sign(
       { 
         id: account.id, 
         email: account.email, 
         type: accountType 
       },
-      process.env.JWT_SECRET!, // O '!' afirma que a variável foi verificada no index.ts
+      process.env.JWT_SECRET!,
       { expiresIn: '24h' }
     );
 
@@ -55,7 +55,6 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     }, 'Login realizado com sucesso'));
 
   } catch (err) {
-    // Delega o erro para o middleware de tratamento de erros
     next(err);
   }
 };

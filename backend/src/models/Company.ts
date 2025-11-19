@@ -26,7 +26,7 @@ export class CompanyModel {
     return db.get<Company>('SELECT * FROM Company WHERE cnpj = ?', cnpj);
   }
 
-  static async create(data: Omit<CompanyWithPassword, 'id' | 'createdAt'>): Promise<Company> {
+  static async create(data: Omit<CompanyWithPassword, 'id' | 'createdAt'>): Promise<CompanyWithPassword> {
     const db = await getDb();
     const result = await db.run(
       'INSERT INTO Company (name, email, cnpj, password, phoneNumber) VALUES (?, ?, ?, ?, ?)',
@@ -37,7 +37,7 @@ export class CompanyModel {
       data.phoneNumber
     );
 
-    const newCompany = await db.get<Company>('SELECT id, name, email, cnpj, phoneNumber, createdAt FROM Company WHERE id = ?', result.lastID);
+    const newCompany = await db.get<CompanyWithPassword>('SELECT * FROM Company WHERE id = ?', result.lastID);
 
     if (!newCompany) {
       throw new Error('Falha ao criar empresa');

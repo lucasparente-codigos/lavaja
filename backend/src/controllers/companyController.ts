@@ -4,6 +4,7 @@ import { hashPassword } from '../utils/password';
 import { successResponse, errorResponse } from '../utils/response';
 import { CompanyModel } from '../models/Company';
 import { MachineModel } from '../models/Machine';
+import { MachineQueueModel } from '../models/MachineQueue';
 
 export const registerCompany = async (req: Request, res: Response) => {
   try {
@@ -66,9 +67,13 @@ export const deleteCompany = async (req: Request, res: Response) => {
 
   try {
     const machines = await MachineModel.findByCompany(companyId);
-
     if (machines.length > 0) {
       return res.status(400).json(errorResponse('Não é possível deletar uma empresa com máquinas associadas.'));
+    }
+
+    const queueCount = await MachineQueueModel.countByCompany(companyId);
+    if (queueCount > 0) {
+      return res.status(400).json(errorResponse('Não é possível deletar uma empresa com usuários na fila de espera.'));
     }
 
     const deleted = await CompanyModel.delete(companyId);

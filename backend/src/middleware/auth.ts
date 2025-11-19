@@ -1,4 +1,3 @@
-// backend/src/middleware/auth.ts
 import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
@@ -8,12 +7,7 @@ export interface TokenPayload extends JwtPayload {
   type: 'user' | 'company';
 }
 
-// 🔥 ADICIONADO: Interface AuthRequest exportada
-export interface AuthRequest extends Request {
-  user?: TokenPayload;
-}
-
-// Aumenta a interface Request do Express para incluir a propriedade 'user'
+// Augment the Express Request interface to include the 'user' property
 declare global {
   namespace Express {
     interface Request {
@@ -22,7 +16,7 @@ declare global {
   }
 }
 
-export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
+export const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
@@ -33,15 +27,14 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
     });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET as string, (err, user) => {
-    if (err) {
-      return res.status(403).json({ 
-        success: false,
-        error: 'Token inválido' 
-      });
-    }
-    // O cast é seguro pois o token foi assinado com o formato TokenPayload
-    req.user = user as TokenPayload; 
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as TokenPayload;
+    req.user = decoded;
     next();
-  });
+  } catch (err) {
+    return res.status(403).json({ 
+      success: false,
+      error: 'Token inválido' 
+    });
+  }
 };

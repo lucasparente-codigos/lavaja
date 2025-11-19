@@ -92,6 +92,19 @@ export class MachineQueueModel {
     return result?.count ?? 0;
   }
 
+  // Contar quantos estão na fila de uma empresa
+  static async countByCompany(companyId: number): Promise<number> {
+    const db = await getDb();
+    const result = await db.get<{ count: number }>(
+      `SELECT COUNT(*) as count 
+       FROM MachineQueue mq
+       JOIN Machine m ON mq.machineId = m.id
+       WHERE m.companyId = ? AND mq.status IN ('aguardando', 'notificado')`,
+      companyId
+    );
+    return result?.count ?? 0;
+  }
+
   // Remover da fila
   static async remove(id: number): Promise<boolean> {
     const db = await getDb();

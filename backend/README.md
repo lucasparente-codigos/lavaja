@@ -12,7 +12,7 @@ O projeto foi desenvolvido utilizando **Node.js** com **TypeScript** e o framewo
 | **Framework** | Express | Framework web minimalista e flexível para Node.js. |
 | **Banco de Dados** | SQLite com `sqlite` e `sqlite3` | Banco de dados leve e sem servidor para persistência de dados. **(Nota: O código utiliza SQL nativo e não um ORM como Prisma, conforme documentação anterior)**. |
 | **Tempo Real** | Socket.IO | Comunicação bidirecional e em tempo real para atualizações de status de máquinas e filas. |
-| **Segurança** | JWT, bcryptjs, Helmet, express-rate-limit | Autenticação baseada em tokens, hash de senhas, e middlewares de segurança. |
+| **Segurança** | JWT, bcrypt, Helmet, express-rate-limit | Autenticação baseada em tokens, hash de senhas, e middlewares de segurança. |
 | **Validação** | Joi | Validação robusta de esquemas de dados de entrada. |
 | **Tarefas** | `backgroundJobs.ts` | Módulo para tarefas agendadas, como o monitoramento do tempo de uso das máquinas. |
 
